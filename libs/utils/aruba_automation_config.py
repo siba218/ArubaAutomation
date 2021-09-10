@@ -51,6 +51,7 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
         # configure
         if dump_flag:
             self.configure_aruba_automation(env=env)
+            self.assign_switch_to_test_suites()
             self.dump_all_properties()
         else:
             self.configure_aruba_automation(env=env)
@@ -224,7 +225,7 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
         self.log.printDebug('End Scanning automation config files inside base directory.\n', quiet=self.quiet)
 
         # testing few things
-        self.config.set('TestCase', 'test_sample1_iap1.py', 'SG9AGYW0F7')
+        # self.config.set('TestCase', 'test_sample1_iap1.py', 'SG9AGYW0F7')
 
     def dump_all_properties(self):
         self.log.printDebug('Starting to dump all available properties!', quiet=self.quiet)
@@ -245,56 +246,23 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
     def assign_switch_to_test_suites(self):
         # fetch all the test files given in a  folder
         file_utils = FileUtils()
-        all_files = file_utils.get_list_of_files("/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout")
+        # test_execution_path = os.getenv('ARUBA_AUTOMATION_TESTCASE_PATH', '')
+        all_files = file_utils.get_list_of_files("/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1")
+        # all_files = file_utils.get_list_of_files(test_execution_path)
         all_test_files = file_utils.filter_only_test_files(all_files)
 
         # get switch sections
         switch_list_from_config = ArubaAutomationConfig().get_switch_sections()
         indexed_testcase_list = file_utils.get_index_files_list(all_test_files,len(switch_list_from_config))
-        self.log.printStep(indexed_testcase_list)
+        final_data_dict = {}
+        if len(switch_list_from_config) == len(indexed_testcase_list):
+            for i in range(len(switch_list_from_config)):
+                final_data_dict[switch_list_from_config[i]] = indexed_testcase_list[i]
 
-#
-#
-#
-#
-# class ArubaConfigUtils:
-#     def __init__(self):
-#         pass
-#
-#     def get_list_of_files(self, dirName):
-#         # create a list of file and sub directories
-#         # names in the given directory
-#         list_of_files = os.listdir(dirName)
-#         all_files = list()
-#         # Iterate over all the entries
-#         for entry in list_of_files:
-#             # Create full path
-#             full_path = os.path.join(dirName, entry)
-#             # If entry is a directory then get the list of files in this directory
-#             if os.path.isdir(full_path):
-#                 all_files = all_files + self.get_list_of_files(full_path)
-#             else:
-#                 all_files.append(full_path)
-#
-#         return all_files
-#
-#     def filter_only_test_files(self, file_list):
-#         test_file_list = []
-#         if len(file_list) > 0:
-#             for file_name in file_list:
-#                 only_file_name = file_name.split("/")[-1]
-#                 if only_file_name.startswith("test") and only_file_name.endswith(".py"):
-#                     test_file_list.append(file_name)
-#             return test_file_list
-#         else:
-#             return []
-#
-#
-#
-# if __name__ == "__main__":
-#     obj = ArubaConfigUtils()
-#     files = obj.get_list_of_files(
-#         "/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/")
-#     test_files = obj.filter_only_test_files(files)
-#     for item in test_files:
-#         print(item)
+        for key in final_data_dict.keys():
+            files_list = final_data_dict[key]
+            for item in files_list:
+                self.config.set('TestCase', item, key)
+
+        self.log.printStep(indexed_testcase_list)
+        self.log.printStep("final data dict:{}".format(final_data_dict))

@@ -9,13 +9,22 @@ from tests.login.base_user_login_test import UserLoginTestBase
 # if use conftest then you can not debug in pycharm
 # You can run your tests individually or file level as well
 
-class SampleTestClass2(UserLoginTestBase):
-    def setUp(self):
-        self.aruba_automation_config = ArubaAutomationConfig(dump_flag=True, quiet=False)
-        self.device_serial_key = self.aruba_automation_config.get_property('TestCase', 'new_test_key')
-        self.log.printLog("Starting {} test".format(self._testMethodName))
-        print("device serial key :{}".format(self.device_serial_key))
+class SampleTestClass(UserLoginTestBase):
+    @classmethod
+    def setUpClass(cls):
+        super(SampleTestClass, cls).setUpClass()
+        cls.current_file_name = __file__
+        cls.device_serial_key = cls.aruba_automation_config.get_property('TestCase', cls.current_file_name)
 
-    def test_testing_command_line_arguments(self):
+    def setUp(self):
+        self.log.printStep(
+            "device serial key for the test- {} : {}".format(self._testMethodName, self.device_serial_key))
+        self.log.printLog("Starting {} test".format(self._testMethodName))
+
+    def test_sample2_gateways1_1(self):
+        self.log.printLog("inside test")
+        print("fetching config values")
+
+    def test_sample2_gateways1_2(self):
         self.log.printLog("inside test")
         print("fetching config values")
