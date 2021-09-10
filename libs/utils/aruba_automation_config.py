@@ -5,6 +5,7 @@ import random
 import sys
 
 from libs.utils.customer_logger import CustomLogger
+from libs.utils.file_utils import FileUtils
 
 MAX_UNIQUE_ID = 10000000  # Non-inclusive
 RANDOM_UNIQUE_ID = random.randrange(MAX_UNIQUE_ID)
@@ -57,8 +58,16 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
     def get_sections(self):
         return ','.join(self.config.sections())
 
+    def get_switch_sections(self):
+        sections = self.config.sections()
+        switch_section = []
+        for item in sections:
+            if item.__contains__("SWITCH"):
+                switch_section.append(item)
+        return switch_section
+
     def get_section_keys(self, section):
-        return list(map(lambda x:x.upper(),self.config.options(section)))
+        return list(map(lambda x: x.upper(), self.config.options(section)))
 
     def get_property(self, section_name, property_name, default_value=''):
         property_value = self.config.get(section_name, property_name)
@@ -134,9 +143,6 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
             self.log.printDebug('My Aruba Automation config file was not found. Assigning default: yoda and '
                                 'continuing', quiet=self.quiet)
             self.config.set('System', 'environment', 'yoda')
-
-        # testing few things
-        self.config.set('TestCase', 'new_test_key', 'device_serial_key')
 
         # Configure Aruba Automation Environment from environment variable
         environment = os.getenv('ARUBA_AUTOMATION_ENVIRONMENT', '')
@@ -217,6 +223,9 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
                                 'Continuing', quiet=self.quiet)
         self.log.printDebug('End Scanning automation config files inside base directory.\n', quiet=self.quiet)
 
+        # testing few things
+        self.config.set('TestCase', 'test_sample1_iap1.py', 'SG9AGYW0F7')
+
     def dump_all_properties(self):
         self.log.printDebug('Starting to dump all available properties!', quiet=self.quiet)
         if self.config.get('System', 'dump_non_system_properties').lower() == 'true':
@@ -233,3 +242,59 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
                     'System', option)), quiet=self.quiet)
             self.log.printDebug('Completed dumping just System properties!', quiet=self.quiet)
 
+    def assign_switch_to_test_suites(self):
+        # fetch all the test files given in a  folder
+        file_utils = FileUtils()
+        all_files = file_utils.get_list_of_files("/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout")
+        all_test_files = file_utils.filter_only_test_files(all_files)
+
+        # get switch sections
+        switch_list_from_config = ArubaAutomationConfig().get_switch_sections()
+        indexed_testcase_list = file_utils.get_index_files_list(all_test_files,len(switch_list_from_config))
+        self.log.printStep(indexed_testcase_list)
+
+#
+#
+#
+#
+# class ArubaConfigUtils:
+#     def __init__(self):
+#         pass
+#
+#     def get_list_of_files(self, dirName):
+#         # create a list of file and sub directories
+#         # names in the given directory
+#         list_of_files = os.listdir(dirName)
+#         all_files = list()
+#         # Iterate over all the entries
+#         for entry in list_of_files:
+#             # Create full path
+#             full_path = os.path.join(dirName, entry)
+#             # If entry is a directory then get the list of files in this directory
+#             if os.path.isdir(full_path):
+#                 all_files = all_files + self.get_list_of_files(full_path)
+#             else:
+#                 all_files.append(full_path)
+#
+#         return all_files
+#
+#     def filter_only_test_files(self, file_list):
+#         test_file_list = []
+#         if len(file_list) > 0:
+#             for file_name in file_list:
+#                 only_file_name = file_name.split("/")[-1]
+#                 if only_file_name.startswith("test") and only_file_name.endswith(".py"):
+#                     test_file_list.append(file_name)
+#             return test_file_list
+#         else:
+#             return []
+#
+#
+#
+# if __name__ == "__main__":
+#     obj = ArubaConfigUtils()
+#     files = obj.get_list_of_files(
+#         "/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/")
+#     test_files = obj.filter_only_test_files(files)
+#     for item in test_files:
+#         print(item)
