@@ -1,9 +1,12 @@
 import os
 
+from libs.utils.customer_logger import CustomLogger
+
 
 class FileUtils:
     def __init__(self):
-        pass
+        self.log = CustomLogger()
+        self.log.setup_logger()
 
     def get_list_of_files(self, dirName):
         # create a list of file and sub directories
@@ -36,20 +39,20 @@ class FileUtils:
     def divide_list_with_range(self, l,index_range):
         final_list = []
         for i in range(0, len(l), index_range):
-            # print(l[i:i + 1])
+            # self.log.printStep(l[i:i + 1])
             final_list.append(l[i:i + index_range])
         return final_list
 
     def get_index_files_list(self, l, devices):
         # looping till length l
-        print("number of test cases:{}".format(len(l)))
-        print("number of devices:{}".format(devices))
+        self.log.printStep("number of test cases:{}".format(len(l)))
+        self.log.printStep("number of devices:{}".format(devices))
         if len(l)==0 or devices == 0:
-            print( "No testcass or devices found...")
+            self.log.printStep( "No testcass or devices found...")
             exit()
         if len(l)==1 or devices==1:
-            # print(l)
-            return l
+            # self.log.printStep(l)
+            return [l]
         if len(l)< devices or len(l)== devices:
             return self.divide_list_with_range(l,1)
 
@@ -61,9 +64,9 @@ class FileUtils:
             if reminder == 0:
                 return self.divide_list_with_range(reminder_list, index_range)
 
-            # print("index range :{}".format(index_range))
-            # print("reminder list:{}".format(l[-reminder:]))
-            # print("final Even list:{}".format(l[:-reminder]))
+            # self.log.printStep("index range :{}".format(index_range))
+            # self.log.printStep("reminder list:{}".format(l[-reminder:]))
+            # self.log.printStep("final Even list:{}".format(l[:-reminder]))
 
             divided_indexed_list = self.divide_list_with_range(final_even_list,index_range)
             for item in reminder_list:

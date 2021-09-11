@@ -1,7 +1,7 @@
-import os
+import configparser
+import sys
 
 from libs.utils.aruba_automation_config import ArubaAutomationConfig
-from libs.utils.file_utils import FileUtils
 from tests.login.base_user_login_test import UserLoginTestBase
 
 
@@ -9,26 +9,23 @@ from tests.login.base_user_login_test import UserLoginTestBase
 # if use conftest then you can not debug in pycharm
 # You can run your tests individually or file level as well
 
-class SampleTestClass1(UserLoginTestBase):
-
+class SampleTestClass2(UserLoginTestBase):
     @classmethod
     def setUpClass(cls):
-        super(SampleTestClass1, cls).setUpClass()
+        super(SampleTestClass2, cls).setUpClass()
         cls.current_file_name = __file__
         cls.device_serial_key = cls.aruba_automation_config.get_property('TestCase', cls.current_file_name)
-        # cls.log.printStep("current file execution path: {}".format(cls.current_file_name))
 
     def setUp(self):
-
         self.log.printStep(
             "device serial key for the test- {} : {}".format(self._testMethodName, self.device_serial_key))
         self.log.printLog("Starting {} test".format(self._testMethodName))
 
-    def test_sample1_iap1_1(self):
+    def test_sample2_gateways1_1(self):
         self.log.printLog("inside test")
         print("fetching config values")
-        print("path env variable: {}".format(os.getenv("ARUBA_AUTOMATION_TESTCASE_PATH")))
 
-    def test_sample1_iap1_2(self):
+    def test_sample2_gateways1_2(self):
         self.log.printLog("inside test")
         print("fetching config values")
+

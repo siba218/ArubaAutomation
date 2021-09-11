@@ -51,7 +51,8 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
         # configure
         if dump_flag:
             self.configure_aruba_automation(env=env)
-            self.assign_switch_to_test_suites()
+            testcases_list = self.get_all_test_files_list()
+            self.assign_testcases_with_switches(testcases_list)
             self.dump_all_properties()
         else:
             self.configure_aruba_automation(env=env)
@@ -243,26 +244,60 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
                     'System', option)), quiet=self.quiet)
             self.log.printDebug('Completed dumping just System properties!', quiet=self.quiet)
 
-    def assign_switch_to_test_suites(self):
+    def get_all_test_files_list(self):
         # fetch all the test files given in a  folder
         file_utils = FileUtils()
-        # test_execution_path = os.getenv('ARUBA_AUTOMATION_TESTCASE_PATH', '')
-        all_files = file_utils.get_list_of_files("/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1")
-        # all_files = file_utils.get_list_of_files(test_execution_path)
-        all_test_files = file_utils.filter_only_test_files(all_files)
+        all_test_files = []
 
+        self.log.printStep("Fetching -ARUBA_AUTOMATION_TESTCASE_PATH- from env variable..")
+        test_execution_path = os.getenv('ARUBA_AUTOMATION_TESTCASE_PATH')
+        if test_execution_path is not None:
+            self.log.printStep("ARUBA_AUTOMATION_TESTCASE_PATH found from env variables :{}".format(test_execution_path))
+            if os.path.isfile(test_execution_path):
+                all_test_files.append(test_execution_path)
+                return all_test_files
+            all_files = file_utils.get_list_of_files(test_execution_path)
+            all_test_files = file_utils.filter_only_test_files(all_files)
+            return all_test_files
+        else:
+            self.log.printStep("ARUBA_AUTOMATION_TESTCASE_PATH env variable not found..")
+            self.log.printStep("Fetching testcase path from local overrides file..")
+            try:
+                overrides_execution_path = self.get_property("System", "test_execution_path")
+            except:
+                self.log.printStep("Not found testcase path in local overrides env specific files. ")
+                self.log.printStep("please provide testcase path in local env specific overrides file")
+                self.log.printStep("exiting from the program...")
+                sys.exit(1)
+
+            if overrides_execution_path:
+                self.log.printStep("Found testcase path from local overrides file")
+                self.log.printStep("Test execution path from local overrides file: {}".format(overrides_execution_path))
+                if os.path.isfile(overrides_execution_path):
+                    all_test_files.append(overrides_execution_path)
+                    return all_test_files
+                all_files = file_utils.get_list_of_files(overrides_execution_path)
+                all_test_files = file_utils.filter_only_test_files(all_files)
+                return all_test_files
+
+    def assign_testcases_with_switches(self, all_test_files):
+        file_utils = FileUtils()
         # get switch sections
         switch_list_from_config = ArubaAutomationConfig().get_switch_sections()
-        indexed_testcase_list = file_utils.get_index_files_list(all_test_files,len(switch_list_from_config))
+        indexed_testcase_list = file_utils.get_index_files_list(all_test_files, len(switch_list_from_config))
         final_data_dict = {}
-        if len(switch_list_from_config) == len(indexed_testcase_list):
+        if len(switch_list_from_config) > len(indexed_testcase_list):
+            for i in range(len(indexed_testcase_list)):
+                final_data_dict[switch_list_from_config[i]] = indexed_testcase_list[i]
+
+        elif len(switch_list_from_config) == len(indexed_testcase_list):
             for i in range(len(switch_list_from_config)):
                 final_data_dict[switch_list_from_config[i]] = indexed_testcase_list[i]
 
+        # pushing all testcase with device_serial to config
         for key in final_data_dict.keys():
             files_list = final_data_dict[key]
             for item in files_list:
                 self.config.set('TestCase', item, key)
-
-        self.log.printStep(indexed_testcase_list)
+        self.log.printStep("indexed testcases list: {}".format(indexed_testcase_list))
         self.log.printStep("final data dict:{}".format(final_data_dict))
