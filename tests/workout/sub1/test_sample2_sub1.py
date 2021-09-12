@@ -22,12 +22,12 @@ class SampleTestClass2(UserLoginTestBase):
             "device serial key for the test- {} : {}".format(self._testMethodName, self.device_serial_key))
         self.log.printLog("Starting {} test".format(self._testMethodName))
 
-    def test_sample2_gateways1_1(self):
+    def test_sample2_sub1_1(self):
         self.log.printLog("inside test")
         print("fetching config values")
         time.sleep(10)
 
-    def test_sample2_gateways1_2(self):
+    def test_sample2_sub1_2(self):
         self.log.printLog("inside test")
         print("fetching config values")
         time.sleep(10)
