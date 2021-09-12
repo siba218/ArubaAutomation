@@ -1,3 +1,5 @@
+import time
+
 from tests.login.base_user_login_test import UserLoginTestBase
 
 
@@ -20,7 +22,9 @@ class SampleTestClass(UserLoginTestBase):
     def test_sample_switch1_1(self):
         self.log.printLog("inside test")
         print("fetching config values")
+        time.sleep(10)
 
     def test_sample_switch1_2(self):
         self.log.printLog("inside test")
         print("fetching config values")
+        time.sleep(10)

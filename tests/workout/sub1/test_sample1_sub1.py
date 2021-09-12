@@ -1,4 +1,5 @@
 import os
+import time
 
 from libs.utils.aruba_automation_config import ArubaAutomationConfig
 from libs.utils.file_utils import FileUtils
@@ -27,8 +28,9 @@ class SampleTestClass1(UserLoginTestBase):
     def test_sample1_iap1_1(self):
         self.log.printLog("inside test")
         print("fetching config values")
-        print("path env variable: {}".format(os.getenv("ARUBA_AUTOMATION_TESTCASE_PATH")))
+        time.sleep(10)
 
     def test_sample1_iap1_2(self):
         self.log.printLog("inside test")
         print("fetching config values")
+        time.sleep(10)

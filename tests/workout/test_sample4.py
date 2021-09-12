@@ -1,5 +1,6 @@
 import configparser
 import sys
+import time
 
 from libs.utils.aruba_automation_config import ArubaAutomationConfig
 from tests.login.base_user_login_test import UserLoginTestBase
@@ -24,7 +25,9 @@ class SampleTestClass(UserLoginTestBase):
     def test_sample2_gateways1_1(self):
         self.log.printLog("inside test")
         print("fetching config values")
+        time.sleep(10)
 
     def test_sample2_gateways1_2(self):
         self.log.printLog("inside test")
         print("fetching config values")
+        time.sleep(10)
