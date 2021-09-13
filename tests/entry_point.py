@@ -25,8 +25,12 @@ class FinalRunClass:
         for item in test_files_list:
             time.sleep(5)
             commad = "pytest -v -s {}".format(item)
+            print("#######################################")
             print("command is : {}".format(commad))
+            print("#######################################")
+            print("executing command")
             os.system(commad)
+            print("Command execution completed")
 
     def get_final_data_dictionary(self):
         final_data_dict = os.getenv("FINAL_DATA_DICT")
