@@ -3,7 +3,6 @@ import multiprocessing
 import os
 import time
 
-from libs.utils.aruba_automation_config import ArubaAutomationConfig
 from libs.utils.customer_logger import CustomLogger
 from tests.base_universal_test import BaseUniversalTest
 
