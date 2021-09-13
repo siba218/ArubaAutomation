@@ -1,3 +1,4 @@
+import json
 import multiprocessing
 import os
 import time
@@ -27,36 +28,53 @@ class FinalRunClass:
             print("command is : {}".format(commad))
             os.system(commad)
 
+    def get_final_data_dictionary(self):
+        final_data_dict = os.getenv("FINAL_DATA_DICT")
+        print("final data dict as string format:{}".format(final_data_dict))
+        return json.loads(final_data_dict)
+
 
 if __name__ == "__main__":
     obj = FinalRunClass()
-    data_dict = {'SWITCH_SG9AGYW0F7': [
-        '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1/test_sample2_sub1.py',
-        '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1/test_sample3_sub1.py',
-        '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1/test_sample1_sub1.py'],
-        'SWITCH_CN80HKW005': [
-            '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample4.py',
-            '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample1.py',
-            '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample2.py'],
-        'SWITCH_CN80HKW006': [
-            '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample3.py',
-            '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub2/test_sample1_sub2.py',
-            '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub2/test_sample2_sub2.py']}
-    # creating processes
-    p1 = multiprocessing.Process(target=obj.run_test, args=(
-        "/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1/test_sample2_sub1.py",))
-    p2 = multiprocessing.Process(target=obj.run_test, args=(
-        ("/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample4.py",)))
+    data_dict = obj.get_final_data_dictionary()
+    data_dict_keys = list(data_dict.keys())
 
-    # starting process 1
-    p1.start()
-    # starting process 2
-    p2.start()
+    # Creating a list of processes
+    processes = [multiprocessing.Process(target=obj.run_test, args=(tuple(data_dict[data_dict_keys[i]],))) for i in range(len(data_dict_keys))]
 
-    # wait until process 1 is finished
-    p1.join()
-    # wait until process 2 is finished
-    p2.join()
+    for p in processes:
+        p.start()
 
-    # both processes finished
+    for p in processes:
+        p.join()
+
+    # data_dict = {'SWITCH_SG9AGYW0F7': [
+    #     '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1/test_sample2_sub1.py',
+    #     '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1/test_sample3_sub1.py',
+    #     '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1/test_sample1_sub1.py'],
+    #     'SWITCH_CN80HKW005': [
+    #         '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample4.py',
+    #         '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample1.py',
+    #         '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample2.py'],
+    #     'SWITCH_CN80HKW006': [
+    #         '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample3.py',
+    #         '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub2/test_sample1_sub2.py',
+    #         '/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub2/test_sample2_sub2.py']}
+    # # creating processes
+    # p1 = multiprocessing.Process(target=obj.run_test, args=(
+    #     "/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/sub1/test_sample2_sub1.py",))
+    # p2 = multiprocessing.Process(target=obj.run_test, args=(
+    #     ("/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout/test_sample4.py",)))
+    #
+    # # starting process 1
+    # p1.start()
+    # # starting process 2
+    # p2.start()
+    #
+    # # wait until process 1 is finished
+    # p1.join()
+    # # wait until process 2 is finished
+    # p2.join()
+    #
+    # # both processes finished
     print("Done!")

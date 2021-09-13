@@ -1,4 +1,5 @@
 import configparser
+import json
 import os
 import os.path
 import random
@@ -301,3 +302,7 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
                 self.config.set('TestCase', item, key)
         self.log.printStep("indexed testcases list: {}".format(indexed_testcase_list))
         self.log.printStep("final data dict:{}".format(final_data_dict))
+
+        # Pushing the final data dict to env variable
+        # os.environ["FINAL_DATA_DICT"] = "\""+str(final_data_dict)+"\""
+        os.environ["FINAL_DATA_DICT"] = json.dumps(final_data_dict)
