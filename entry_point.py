@@ -22,8 +22,9 @@ class FinalRunClass:
 
     def run_test(self, *test_files_list):
         for item in test_files_list:
-            time.sleep(5)
-            commad = "pytest -v -s {}".format(item)
+            # time.sleep(5)
+            # commad = "pytest -v -s {}".format(item)
+            commad = "python3 -m pytest -v {} --alluredir=/Users/sibasishmohanta/Desktop/allure_report".format(item)
             print("#######################################")
             print("command is : {}".format(commad))
             print("#######################################")
@@ -44,6 +45,8 @@ if __name__ == "__main__":
 
     # Creating a list of processes
     processes = [multiprocessing.Process(target=obj.run_test, args=(tuple(data_dict[data_dict_keys[i]],))) for i in range(len(data_dict_keys))]
+
+    start_time = time.time()
 
     for p in processes:
         p.start()
@@ -80,4 +83,7 @@ if __name__ == "__main__":
     # p2.join()
     #
     # # both processes finished
+
+    end_time = time.time()
+    print("total execution time is : {}".format(end_time - start_time))
     print("Done!")

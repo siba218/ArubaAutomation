@@ -21,7 +21,7 @@ paramiko
 pydoc-markdown==2.0.5
 pika
 pymysql
-pytest-allure-adaptor
+allure-pytest
 python-dateutil
 python-guerrillamail
 pycryptodomex
