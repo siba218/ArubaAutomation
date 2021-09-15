@@ -11,7 +11,7 @@ class BaseUniversalTest(TestCase):
     def setUpClass(cls):
         # super().setUpClass()
         os.environ[
-            "ARUBA_AUTOMATION_TESTCASE_PATH"] = "/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests/workout"
+            "ARUBA_AUTOMATION_TESTCASE_PATH"] = "/Users/sibasishmohanta/Documents/Development/ArubaAutomation/tests"
         cls.log = CustomLogger()
         cls.log.setup_logger()
         cls.aruba_automation_config = ArubaAutomationConfig(dump_flag=True, quiet=False)

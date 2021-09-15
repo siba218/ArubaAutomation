@@ -14,3 +14,7 @@ class FirmwareApi:
     def delete_group(self, group_id, data=None, params = None):
         response = self.session.delete(self.session.host + "groups/v2/{}".format(group_id))
         return response
+
+    def get_switch_list_details(self):
+        response = self.session.get(self.session.host + "/firmware/switch/HPPC/devices/limit/20/offset/0")
+        return response
