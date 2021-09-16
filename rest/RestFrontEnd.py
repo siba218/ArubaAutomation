@@ -13,7 +13,7 @@ import platform
 if platform.system() == "Darwin":
     import gevent.monkey
 
-    gevent.monkey.patch_all()
+    # gevent.monkey.patch_all()
 ######## IMPORT STATEMENTS ############
 import re
 import json
