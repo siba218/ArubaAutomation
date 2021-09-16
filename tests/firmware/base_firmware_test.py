@@ -32,7 +32,7 @@ class FirmwareTestBase(BaseUniversalTest):
     def wait_for_device_grade(self, device_serial, max_wait_time=300):
         count = 0
         status = ""
-        self.log.printStep("Waiting for the Firmware upgrade to complete. max time provided: {}sec".format(max_wait_time))
+        self.log.printLog("Waiting for the Firmware upgrade to complete. max time provided: {}sec".format(max_wait_time))
         while count < max_wait_time + 1:
 
             # wait for fw_staus=reboot to appear
@@ -43,9 +43,9 @@ class FirmwareTestBase(BaseUniversalTest):
                     status = item["fw_status"]
 
             if status != "reboot":
+                self.log.printLog("status is not reboot.. waiting for next pool in 10sec for status to be reboot")
                 time.sleep(10)
                 count = count + 10
-                self.log.printStep("status is not reboot.. waiting for next pool in 10sec for status to be reboot")
                 try:
                     for item in resp.body["device_info"]:
                         if item["device_id"] == device_serial:
@@ -53,12 +53,11 @@ class FirmwareTestBase(BaseUniversalTest):
                                 return True
                 except:
                     pass
-
                 continue
 
             # then wait for fw_staus=reboot to disappear
             if status == "reboot":
-                self.log.printStep("status is reboot.. waiting for next pool in 10sec for reboot status to disappear")
+                self.log.printLog("status is reboot.. waiting for next pool in 10sec for reboot status to disappear")
                 time.sleep(10)
                 count = count + 10
-        return True
+        return False
