@@ -22,3 +22,7 @@ class FirmwareApi:
     def upgrade_all(self, data=None):
         response = self.session.post(self.session.host + "firmware/switch/HPPC/upgrade", data=data)
         return response
+
+    def device_reboot(self, data=None):
+        response = self.session.post(self.session.host + "/firmware/switch/HPPC/reboot", data=data)
+        return response

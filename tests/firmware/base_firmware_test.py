@@ -29,7 +29,7 @@ class FirmwareTestBase(BaseUniversalTest):
             if item["device_id"] == device_serial:
                 return item["version"]
 
-    def wait_for_device_grade(self, device_serial, max_wait_time=300):
+    def wait_for_device_reboot(self, device_serial, max_wait_time=300):
         count = 0
         status = ""
         self.log.printLog("Waiting for the Firmware upgrade to complete. max time provided: {}sec".format(max_wait_time))
@@ -43,9 +43,10 @@ class FirmwareTestBase(BaseUniversalTest):
                     status = item["fw_status"]
 
             if status != "reboot":
-                self.log.printLog("status is not reboot.. waiting for next pool in 10sec for status to be reboot")
-                time.sleep(10)
-                count = count + 10
+                self.log.printLog("status is not reboot.. waiting for next pool in 30sec for status to be reboot")
+                time.sleep(30)
+                count = count + 30
+                self.log.printLog("total wait time in seconds : {}".format(count))
                 try:
                     for item in resp.body["device_info"]:
                         if item["device_id"] == device_serial:
@@ -57,7 +58,34 @@ class FirmwareTestBase(BaseUniversalTest):
 
             # then wait for fw_staus=reboot to disappear
             if status == "reboot":
-                self.log.printLog("status is reboot.. waiting for next pool in 10sec for reboot status to disappear")
-                time.sleep(10)
-                count = count + 10
+                self.log.printLog("status is reboot.. waiting for next pool in 30sec for reboot status to disappear")
+                time.sleep(30)
+                count = count + 30
+                self.log.printLog("total wait time in seconds : {}".format(count))
+        self.log.printLog("Max wait time is over. Device not upgraded")
+        return False
+
+    def wait_for_device_firmware_download(self, device_serial, max_wait_time=300):
+        count = 0
+        status = ""
+        self.log.printLog("Waiting for the Firmware upgrade to complete. max time provided: {}sec".format(max_wait_time))
+        while count < max_wait_time + 1:
+
+            # wait for fw_staus=reboot to appear
+            resp = self.firmware_obj.get_switch_list_details()
+
+            for item in resp.body["device_info"]:
+                if item["device_id"] == device_serial:
+                    status = item["fw_status"]
+
+            if status != "DOWNLOAD_COMPLETED":
+                self.log.printLog("status is not DOWNLOAD_COMPLETED.. waiting for next pool in 30sec ")
+                time.sleep(30)
+                count = count + 30
+                self.log.printLog("total wait time in seconds : {}".format(count))
+                continue
+            if status == "DOWNLOAD_COMPLETED":
+                return True
+
+        self.log.printLog("Max wait time is over. Device not upgraded")
         return False
