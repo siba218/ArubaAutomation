@@ -37,13 +37,15 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
         else:
             self.to_firmware_version = FirmwareConstants.SWITCH_RECOMMENDED_VERSION
 
-    def test_upgrade_all_device_of_individual_site_with_device_local_and_scheduling(self):
+    def test_upgrade_all_device_of_site_with_device_local_and_scheduling(self):
 
-        """ while upgrading using device_local_time you have to set timezone:"none"
+        """
+        This testcase is to upgrade all devices under a site with option : device local time + scheduling
+         while upgrading using device_local_time you have to set timezone:"none"
          Steps:
             1. login with automation user and get the session object
             2. Verify the firmware available in the device and set the logic to upgrade the firmware
-            3. Hit the firmware upgrade api
+            3. Hit the firmware upgrade api with
                         1.site details
                         2. device local timestamp
                         3. Scheduling and wait for the upgrade to over
@@ -70,7 +72,9 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
 
     def test_upgrade_all_device_of_individual_site_india_time_and_scheduling(self):
 
-        """ Steps:
+        """
+        This testcase is to upgrade all devices under a site with option : with specific time zone + scheduling
+        Steps:
             1. login with automation user and get the session object
             2. Verify the firmware available in the device and set the logic to upgrade the firmware
             3. Hit the firmware upgrade api
@@ -97,3 +101,10 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
             self.assertEqual(self.to_firmware_version, self.get_device_firmware_vesion(self.device_serial))
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
+
+    def tearDown(self):
+        pass
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.session.disconnect()

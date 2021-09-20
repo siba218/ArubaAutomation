@@ -1,8 +1,6 @@
 import sys
-import time
 
 from libs.api.FirmwareServices.firmware_request_builders import FirmwareUpgradeRequestBuilder
-from libs.utils.TimeUtils import TimeUtils
 from tests.firmware.base_firmware_test import FirmwareTestBase
 from tests.firmware.firmware_constants import FirmwareConstants
 
@@ -39,16 +37,12 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
 
     def test_upgrade_all_device_of_individual_site(self):
         """
-        This test case is same when user selects custom_build and individual build as payload is same
-        payload = {"reboot":true,"when":0,"timezone":"+00:00","partition":"primary","sites":{"1":"16.10.0016"},"devices":{}}
-
-
+        This test for upgrading all devices under a site
         Steps:
             1. login with automation user and get the session object
             2. Verify the firmware available in the device and set the logic to upgrade the firmware
-            3. Hit the firmware upgrade api with site details and wait for the upgrade to over
+            3. Hit the firmware upgrade api with site and firmware details and wait for the upgrade to over
             4. Once Upgrade is over then verify the Upgraded software version in the device
-
         """
         payload = FirmwareUpgradeRequestBuilder().with_sites({self.site_id: self.to_firmware_version}).build()
         self.firmware_obj.upgrade_all(data=payload)
@@ -61,7 +55,17 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 
-    def test_upgrade_device_with_and_reboot_later(self):
+    def test_upgrade_device_and_reboot_later(self):
+        """
+        This test for upgrading all devices under a site with reboot later option
+        Steps:
+            1. login with automation user and get the session object
+            2. Verify the firmware available in the device and set the logic to upgrade the firmware
+            3. Hit the firmware upgrade api with site and firmware details with reboot later option as False
+            4. Wait for the firmware to download
+            5. Reboot the device for firmware to upgrade
+            6. Once Upgrade is over then verify the Upgraded software version in the device
+        """
         payload = FirmwareUpgradeRequestBuilder().with_reboot(False).with_sites(
             {self.site_id: self.to_firmware_version}).build()
         self.firmware_obj.upgrade_all(data=payload)
@@ -77,6 +81,16 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 
     def test_upgrade_site_with_recommended_version(self):
+        """
+        This test for upgrading all devices under a site with recommended version
+        Steps:
+            1. login with automation user and get the session object
+            2. Verify the firmware available in the device
+                a. If the device firmware is already in Recommended version then downgrade it
+                b. Then set the upgraded version as recommended version.
+            3. Hit the firmware upgrade api with site and firmware details
+            4. Once Upgrade is over then verify the Upgraded software version in the device
+                """
         if self.version == FirmwareConstants.SWITCH_RECOMMENDED_VERSION:
             self.log.printLog("device already in recommended version")
             self.log.printLog("Downgrading device to some lower version..")
@@ -93,3 +107,10 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
                              self.get_device_firmware_vesion(self.device_serial))
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
+
+    def tearDown(self):
+        pass
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.session.disconnect()
