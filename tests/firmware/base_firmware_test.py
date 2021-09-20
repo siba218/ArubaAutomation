@@ -16,10 +16,10 @@ class FirmwareTestBase(BaseUniversalTest):
         cls.session = RestFrontEnd(host=cls.login_url, user=cls.email, password=cls.password,
                                    customer_id=cls.customer_id)
         cls.firmware_obj = FirmwareApi(cls.session)
-        cls.device_list_response = cls.firmware_obj.get_switch_list_details()
 
     def get_device_status_site_group_ids_and_version(self, device_serial):
-        for item in self.device_list_response.body["device_info"]:
+        resp = self.firmware_obj.get_switch_list_details()
+        for item in resp.body["device_info"]:
             if item["device_id"] == device_serial:
                 return [item["device_status"], item["site_id"], item["group_id"], item["version"]]
 

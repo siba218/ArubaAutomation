@@ -20,7 +20,7 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
         self.status, self.site_id, self.group_id, self.version = self.get_device_status_site_group_ids_and_version(
             self.device_serial)
         if self.status == 1:
-            self.log.printLog("Device is onilne . Progressing  with test...")
+            self.log.printLog("Device is online . Progressing  with test...")
         else:
             self.log.printLog("device is offline...")
             self.log.printLog("exiting from test")
@@ -108,6 +108,7 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 
+    #  Note: All the above three tests are to be written for secondary partition reboot also
     def tearDown(self):
         pass
 

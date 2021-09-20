@@ -24,5 +24,13 @@ class FirmwareApi:
         return response
 
     def device_reboot(self, data=None):
-        response = self.session.post(self.session.host + "/firmware/switch/HPPC/reboot", data=data)
+        response = self.session.post(self.session.host + "firmware/switch/HPPC/reboot", data=data)
+        return response
+
+    def set_group_compliance_check(self, data=None):
+        response = self.session.post(self.session.host + "firmware/group/compliance_version_check", data=data)
+        return response
+
+    def set_group_compliance(self, data=None):
+        response = self.session.post(self.session.host + "firmware/group/compliance_version", data=data)
         return response

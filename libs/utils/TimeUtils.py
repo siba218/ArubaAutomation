@@ -14,9 +14,13 @@ class TimeUtils:
         self.log = CustomLogger()
         self.log.setup_logger()
 
-    def get_current_epoc_time(self, minute_time_ahead):
+    def get_current_epoc_time(self, minute_time_ahead, convert_mili=True):
         millisecond = datetime.now() + timedelta(minutes=minute_time_ahead)
-        epoch_time = math.trunc(time.mktime(millisecond.timetuple()) * 1000)
+        if convert_mili:
+            epoch_time = math.trunc(time.mktime(millisecond.timetuple()) * 1000)
+            self.log.printLog("epoch time is: {}".format(epoch_time))
+            return epoch_time
+        epoch_time = math.trunc(time.mktime(millisecond.timetuple()))
         self.log.printLog("epoch time is: {}".format(epoch_time))
         return epoch_time
 
