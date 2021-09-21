@@ -6,25 +6,13 @@ UpgradeAll:
 SetCompliance:
 {"delete_firmware_compliance":{},"set_firmware_compliance":{"HPPC":"16.10.0015"},"reboot":{"HPPC":true},"groups":[3],
 "compliance_scheduled_at":0,"timezone":"+00:00","partition":"primary"}
+
+Individual Device Upgrade:
+{"reboot":true,"when":0,"timezone":"+00:00","partition":"primary","devices":{"CN80HKW005":"16.10.0014"}}
 """
 
 
-class Device:
-    def __init__(self):
-        self.devices = {}
-
-
-class Group:
-    def __init__(self):
-        self.group = {}
-
-
-class GroupRequestBuilder:
-    def __init__(self):
-        pass
-
-
-class FirmwareUpgradeRequest:
+class FirmwareUpgradeAllRequest:
     def __init__(self):
         self.devices = {}
         self.reboot = True
@@ -34,9 +22,9 @@ class FirmwareUpgradeRequest:
         self.sites = {}
 
 
-class FirmwareUpgradeRequestBuilder:
+class FirmwareUpgradeAllRequestBuilder:
     def __init__(self):
-        self.data = FirmwareUpgradeRequest()
+        self.data = FirmwareUpgradeAllRequest()
 
     def with_reboot(self, boot_type):
         self.data.reboot = boot_type
@@ -103,6 +91,44 @@ class FirmwareComplianceRequestBuilder:
 
     def build(self):
         return self.data.__dict__
+
+
+class FirmwareDeviceRequest:
+    def __init__(self):
+        self.devices = {}
+        self.reboot = True
+        self.when = 0
+        self.timezone = "+00:00"
+        self.partition = "primary"
+
+
+class FirmwareDeviceRequestBuilder:
+    def __init__(self):
+        self.data = FirmwareDeviceRequest()
+
+    def with_devices(self, device_list):
+        self.data.devices = device_list
+        return self
+
+    def with_reboot(self, reboot):
+        self.data.reboot = reboot
+        return self
+
+    def with_when(self, epoch_time):
+        self.data.when = epoch_time
+        return self
+
+    def with_timezone(self, timezone):
+        self.data.timezone = timezone
+        return self
+
+    def with_partition(self, partition):
+        self.data.partition = partition
+        return self
+
+    def build(self):
+        return self.data.__dict__
+
 
 if __name__ == "__main__":
     print(FirmwareComplianceRequestBuilder().build())

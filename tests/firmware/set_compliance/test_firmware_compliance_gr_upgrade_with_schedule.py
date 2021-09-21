@@ -36,7 +36,7 @@ class FirmwareComplianceGrUpgrareScheduleTests(FirmwareTestBase):
         else:
             self.to_firmware_version = FirmwareConstants.SWITCH_RECOMMENDED_VERSION
 
-    def test_gr_compliance_upgrade_with_scheduling(self):
+    def test_upgrade_a_group_with_set_compliance_and_scheduling(self):
         epoch_time_2_min_ahead = TimeUtils().get_current_epoc_time(2, convert_mili=False)
         payload = FirmwareComplianceRequestBuilder()\
             .with_set_firmware_compliance({"HPPC": self.to_firmware_version}) \

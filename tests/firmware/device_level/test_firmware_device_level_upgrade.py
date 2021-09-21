@@ -1,14 +1,12 @@
 import sys
-import time
 
-from nose_parameterized import parameterized
-
-from libs.api.FirmwareServices.firmware_request_builders import FirmwareComplianceRequestBuilder
+from libs.api.FirmwareServices.firmware_request_builders import FirmwareDeviceRequestBuilder
 from tests.firmware.base_firmware_test import FirmwareTestBase
 from tests.firmware.firmware_constants import FirmwareConstants
 
 
-class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
+class FirmwareDeviceUpgradeTests(FirmwareTestBase):
+
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -37,18 +35,10 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
         else:
             self.to_firmware_version = FirmwareConstants.SWITCH_RECOMMENDED_VERSION
 
-        self.log.printLog("Upgraded firmware version for the test: {}".format(self.to_firmware_version))
+    def test_upgrade_a_device(self):
+        payload = FirmwareDeviceRequestBuilder().with_devices({self.device_serial: self.to_firmware_version}).build()
 
-    @parameterized.expand(
-        [("primary",), ("secondary",),])
-    def test_upgrade_a_group_with_set_compliance(self, partition):
-        payload = FirmwareComplianceRequestBuilder()\
-            .with_set_firmware_compliance({"HPPC":self.to_firmware_version})\
-            .with_groups([self.group_id])\
-            .with_partition(partition).\
-            build()
-
-        self.firmware_obj.set_group_compliance(data=payload)
+        self.firmware_obj.upgrade_all(data=payload)
 
         self.log.printLog("payload is: {}".format(payload))
         if self.wait_for_device_reboot(self.device_serial):
@@ -58,17 +48,13 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 
-    @parameterized.expand(
-        [("primary",), ("secondary",),])
-    def test_upgrade_a_group_with_set_compliance_and_reboot_later(self, partition):
-        payload = FirmwareComplianceRequestBuilder() \
-            .with_set_firmware_compliance({"HPPC": self.to_firmware_version}) \
-            .with_groups([self.group_id]) \
-            .with_reboot({"HPPC":False})\
-            .with_partition(partition)\
+    def test_upgrade_a_device_with_reboot_later(self):
+        payload = FirmwareDeviceRequestBuilder()\
+            .with_devices({self.device_serial: self.to_firmware_version})\
+            .with_reboot(False)\
             .build()
 
-        self.firmware_obj.set_group_compliance(data=payload)
+        self.firmware_obj.upgrade_all(data=payload)
 
         self.log.printLog("payload is: {}".format(payload))
         if self.wait_for_device_firmware_download(self.device_serial):
@@ -80,13 +66,26 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 
+    def test_upgrade_a_device_with_recommended_version(self):
+        if self.version == FirmwareConstants.SWITCH_RECOMMENDED_VERSION:
+            self.log.printLog("device already in recommended version")
+            self.log.printLog("Downgrading device to some lower version..")
+            payload = FirmwareDeviceRequestBuilder().with_devices(
+                {self.device_serial: FirmwareConstants.SWITCH_VERSION_14}).build()
+            self.firmware_obj.upgrade_all(data=payload)
+
+        new_payload = FirmwareDeviceRequestBuilder().with_devices({self.device_serial: None}).build()
+        self.firmware_obj.upgrade_all(data=new_payload)
+        if self.wait_for_device_reboot(self.device_serial):
+            self.log.printLog("Upgrade is complete")
+            self.log.printLog("verifying Upgraded firmware version..")
+            self.assertEqual(FirmwareConstants.SWITCH_RECOMMENDED_VERSION,
+                             self.get_device_firmware_vesion(self.device_serial))
+        else:
+            self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
+
     def tearDown(self):
-        # turn off set compliance for the same group
-        payload = FirmwareComplianceRequestBuilder() \
-            .with_groups([self.group_id]) \
-            .with_delete_firmware_compliance({"CX":"none","HPPC":"none"})\
-            .build()
-        self.firmware_obj.set_group_compliance(data=payload)
+        pass
 
     @classmethod
     def tearDownClass(cls):
