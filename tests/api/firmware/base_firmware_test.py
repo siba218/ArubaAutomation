@@ -1,7 +1,7 @@
 import time
 
 from libs.api.FirmwareServices.firmware_api import FirmwareApi
-from rest.RestFrontEnd import RestFrontEnd
+from libs.utils.RestFrontEnd import RestFrontEnd
 from tests.base_universal_test import BaseUniversalTest
 
 

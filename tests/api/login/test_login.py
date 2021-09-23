@@ -4,8 +4,8 @@ from unittest import TestCase
 from libs.api.FirmwareServices.firmware_api import FirmwareApi
 from libs.utils.aruba_automation_config import ArubaAutomationConfig
 from libs.utils.customer_logger import CustomLogger
-from rest.RestFrontEnd import RestFrontEnd
-from tests.login.base_user_login_test import UserLoginTestBase
+from libs.utils.RestFrontEnd import RestFrontEnd
+from tests.api.login.base_user_login_test import UserLoginTestBase
 
 
 class LoginTest(UserLoginTestBase):

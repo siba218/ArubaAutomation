@@ -38,7 +38,16 @@ class PingDevice:
         ssh.close()
 
     def ssh_device(self, host, username, password, commands):
-
+        # before using this you need to set username and password for your switch using below process
+        """
+        Note: Before running below commands unlicense the device from central
+        Connect to the device using ssh
+        Config terminal
+        Password manager user-name admin
+        >> it will ask for the password
+        >> confirm the password
+        write memory
+        """
         ssh = paramiko.SSHClient()
         ssh.load_system_host_keys()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -52,6 +61,7 @@ class PingDevice:
         print("Device Connected using ssh..")
         print("Invoking shell for executing command...")
         print("command list: {}".format(commands))
+        out = []
         conn = ssh.invoke_shell()
         for cmd in commands:
             # print("#####################################################")
@@ -59,10 +69,14 @@ class PingDevice:
             conn.send(cmd_bytes)
             time.sleep(5)
             output = conn.recv(650000)
-            print(output.decode(), end='')
+            if cmd == '\n':
+                continue
+            out.append(output.decode())
+            # print(output.decode(), end='')
             # print('\n')
             # print("#####################################################", end='\n')
         ssh.close()
+        return out
 
 
 if __name__ == "__main__":
@@ -70,7 +84,12 @@ if __name__ == "__main__":
     # print("------------------")
     # print(out11)
     # PingDevice().ssh_jenkins_machine()
+    command = ['\n', "sh version\n"]
     force_connect_yoda = ['\n', "config terminal\n", "aruba-central url https://device-yoda.arubathena.com/ws\n",
                           "aruba-central enable\n", "exit\n", "show aruba-central\n"]
     # PingDevice().ssh_device("10.22.108.82", "admin", "admin1234", ['\n', 'sh flash\n', 'sh version\n', 'exit\n'])
-    PingDevice().ssh_device("10.21.31.166", "admin", "admin1234", force_connect_yoda)
+    l = PingDevice().ssh_device("10.22.108.82", "admin", "admin1234", command)
+    print("#########################################")
+    print(l)
+    for item in l:
+        print(item)

@@ -13,7 +13,7 @@ from datetime import datetime
 import voluptuous
 
 from libs.utils.customer_logger import CustomLogger
-from rest import LogModule as log
+from libs.utils import LogModule as log
 import requests, copy
 from requests.packages.urllib3.util import Retry
 from requests.packages.urllib3.exceptions import InsecureRequestWarning

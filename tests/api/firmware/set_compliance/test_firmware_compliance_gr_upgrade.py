@@ -4,8 +4,8 @@ import time
 from nose_parameterized import parameterized
 
 from libs.api.FirmwareServices.firmware_request_builders import FirmwareComplianceRequestBuilder
-from tests.firmware.base_firmware_test import FirmwareTestBase
-from tests.firmware.firmware_constants import FirmwareConstants
+from tests.api.firmware.base_firmware_test import FirmwareTestBase
+from tests.api.firmware.firmware_constants import FirmwareConstants
 
 
 class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):

@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from libs.utils.customer_logger import CustomLogger
-from rest.RestFrontEnd import RestFrontEnd
+from libs.utils.RestFrontEnd import RestFrontEnd
 
 
 

@@ -25,8 +25,8 @@ import os
 from email_split import email_split
 from six.moves.urllib.parse import urljoin, urlparse
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-from rest import LogModule as log
-from rest.RestCore import RestCore
+from libs.utils import LogModule as log
+from libs.utils.RestCore import RestCore
 ########################################
 
 # To turn off File Warnings
