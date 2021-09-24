@@ -13,7 +13,7 @@ class LoginTest(BaseUniversalTest):
         self.login_page = LoginPage(self.browser)
 
     def test_login(self):
-        self.login_page.user_login("smohanta32+23@gmail.com", "LGsoft@123")
+        self.login_page.user_login("siba218@gmail.com", "Aruba@123")
 
     def tearDown(self):
         self.browser.close()
