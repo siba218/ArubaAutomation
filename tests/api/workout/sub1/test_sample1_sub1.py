@@ -1,9 +1,6 @@
-import os
 import time
 
-from libs.utils.aruba_automation_config import ArubaAutomationConfig
-from libs.utils.file_utils import FileUtils
-from tests.login.base_user_login_test import UserLoginTestBase
+from tests.api.login.base_user_login_test import UserLoginTestBase
 
 
 # below testcase is the example of how we are passing device serial to a testfile dynamically and not using any conftest.py file
@@ -20,7 +17,6 @@ class SampleTestClass1(UserLoginTestBase):
         # cls.log.printStep("current file execution path: {}".format(cls.current_file_name))
 
     def setUp(self):
-
         self.log.printStep(
             "device serial key for the test- {} : {}".format(self._testMethodName, self.device_serial_key))
         self.log.printLog("Starting {} test".format(self._testMethodName))

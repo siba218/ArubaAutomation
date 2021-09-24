@@ -52,8 +52,10 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
         # configure
         if dump_flag:
             self.configure_aruba_automation(env=env)
+            module_name = self.get_module_name()
+            device_type = self.get_device_type()
             testcases_list = self.get_all_test_files_list()
-            self.assign_testcases_with_switches(testcases_list)
+            self.assign_testcases_with_devices(testcases_list, device_type, module_name)
             self.dump_all_properties()
         else:
             self.configure_aruba_automation(env=env)
@@ -61,13 +63,13 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
     def get_sections(self):
         return ','.join(self.config.sections())
 
-    def get_switch_sections(self):
+    def get_device_sections(self, device_type, module_name):
         sections = self.config.sections()
-        switch_section = []
+        device_section = []
         for item in sections:
-            if item.__contains__("SWITCH"):
-                switch_section.append(item)
-        return switch_section
+            if item.__contains__(device_type) and item.__contains__(module_name):
+                device_section.append(item)
+        return device_section
 
     def get_section_keys(self, section):
         return list(map(lambda x: x.upper(), self.config.options(section)))
@@ -253,7 +255,8 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
         self.log.printStep("Fetching -ARUBA_AUTOMATION_TESTCASE_PATH- from env variable..")
         test_execution_path = os.getenv('ARUBA_AUTOMATION_TESTCASE_PATH')
         if test_execution_path is not None:
-            self.log.printStep("ARUBA_AUTOMATION_TESTCASE_PATH found from env variables :{}".format(test_execution_path))
+            self.log.printStep(
+                "ARUBA_AUTOMATION_TESTCASE_PATH found from env variables :{}".format(test_execution_path))
             if os.path.isfile(test_execution_path):
                 all_test_files.append(test_execution_path)
                 return all_test_files
@@ -264,7 +267,7 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
             self.log.printStep("ARUBA_AUTOMATION_TESTCASE_PATH env variable not found..")
             self.log.printStep("Fetching testcase path from local overrides file..")
             try:
-                overrides_execution_path = self.get_property("System", "test_execution_path")
+                overrides_execution_path = self.get_property("System", "ARUBA_AUTOMATION_TESTCASE_PATH")
             except:
                 self.log.printStep("Not found testcase path in local overrides env specific files. ")
                 self.log.printStep("please provide testcase path in local env specific overrides file")
@@ -281,19 +284,66 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
                 all_test_files = file_utils.filter_only_test_files(all_files)
                 return all_test_files
 
-    def assign_testcases_with_switches(self, all_test_files):
-        file_utils = FileUtils()
-        # get switch sections
-        switch_list_from_config = ArubaAutomationConfig().get_switch_sections()
-        indexed_testcase_list = file_utils.get_index_files_list(all_test_files, len(switch_list_from_config))
-        final_data_dict = {}
-        if len(switch_list_from_config) > len(indexed_testcase_list):
-            for i in range(len(indexed_testcase_list)):
-                final_data_dict[switch_list_from_config[i]] = indexed_testcase_list[i]
+    def get_module_name(self):
+        self.log.printLog("Fetching -MODULE_NAME- from env variable")
+        device_type_from_env = os.getenv('MODULE_NAME')
+        if device_type_from_env is not None:
+            self.log.printLog("MODULE_NAME found from env variable..")
+            return device_type_from_env
+        else:
+            self.log.printStep("MODULE_NAME env variable not found..")
+            self.log.printStep("Fetching MODULE_NAME from local overrides file..")
+            try:
+                device_type = self.get_property("System", "MODULE_NAME")
+            except:
+                self.log.printStep("Not found MODULE_NAME  in local overrides env specific files. ")
+                self.log.printStep("please provide MODULE_NAME  in local env specific overrides file")
+                self.log.printStep("exiting from the program...")
+                sys.exit(1)
+            self.log.printLog("-MODULE_NAME- found from local overrides files")
+            return device_type
 
-        elif len(switch_list_from_config) == len(indexed_testcase_list):
-            for i in range(len(switch_list_from_config)):
-                final_data_dict[switch_list_from_config[i]] = indexed_testcase_list[i]
+    def get_device_type(self):
+        self.log.printLog("Fetching -DEVICE_TYPE- from env variable")
+        device_type_from_env = os.getenv('DEVICE_TYPE')
+        if device_type_from_env is not None:
+            self.log.printLog("DEVICE_TYPE found from env variable")
+            return device_type_from_env
+        else:
+            self.log.printStep("DEVICE_TYPE env variable not found..")
+            self.log.printStep("Fetching DEVICE_TYPE from local overrides file..")
+            try:
+                device_type = self.get_property("System", "DEVICE_TYPE")
+            except:
+                self.log.printStep("Not found DEVICE_TYPE  in local overrides env specific files. ")
+                self.log.printStep("please provide DEVICE_TYPE  in local env specific overrides file")
+                self.log.printStep("exiting from the program...")
+                sys.exit(1)
+            self.log.printLog("-DEVICE_TYPE- found from local overrides files")
+            return device_type
+
+    def assign_testcases_with_devices(self, all_test_files, device_type, module_name):
+        file_utils = FileUtils()
+        device_list_from_config = []
+        if device_type == "SWITCH":
+            device_list_from_config = ArubaAutomationConfig().get_device_sections(device_type, module_name)
+        elif device_type == "IAP":
+            device_list_from_config = ArubaAutomationConfig().get_device_sections(device_type, module_name)
+        elif device_type == "GATEWAY":
+            device_list_from_config = ArubaAutomationConfig().get_device_sections(device_type, module_name)
+        else:
+            self.log.printLog("{} - not found in the list of devices. supported - SWITCH/IAP/GATEWAY")
+            sys.exit(1)
+
+        indexed_testcase_list = file_utils.get_index_files_list(all_test_files, len(device_list_from_config))
+        final_data_dict = {}
+        if len(device_list_from_config) > len(indexed_testcase_list):
+            for i in range(len(indexed_testcase_list)):
+                final_data_dict[device_list_from_config[i]] = indexed_testcase_list[i]
+
+        elif len(device_list_from_config) == len(indexed_testcase_list):
+            for i in range(len(device_list_from_config)):
+                final_data_dict[device_list_from_config[i]] = indexed_testcase_list[i]
 
         # pushing all testcase with device_serial to config
         for key in final_data_dict.keys():

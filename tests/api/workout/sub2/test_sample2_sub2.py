@@ -1,9 +1,6 @@
-import configparser
-import sys
 import time
 
-from libs.utils.aruba_automation_config import ArubaAutomationConfig
-from tests.login.base_user_login_test import UserLoginTestBase
+from tests.api.login.base_user_login_test import UserLoginTestBase
 
 
 # below testcase is the example of how we are passing device serial to a testfile dynamically and not using any conftest.py file

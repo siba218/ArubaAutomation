@@ -131,4 +131,4 @@ class FirmwareDeviceRequestBuilder:
 
 
 if __name__ == "__main__":
-    print(FirmwareComplianceRequestBuilder().build())
+    print(FirmwareComplianceRequestBuilder().with_reboot({'HPPC':False}).build())
