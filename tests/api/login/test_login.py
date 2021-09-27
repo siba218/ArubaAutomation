@@ -67,6 +67,7 @@ class LoginTest(UserLoginTestBase):
         # print("logger object : {}".format(sess.logger.__dict__))
         # sess.session.post()
         firmware = FirmwareApi(self.session)
+        time.sleep(5)
         resp = firmware.get_devices_down_status(params={"status": "down"})
         self.assertEqual(resp.status_code, 200)
         # resp = self.session.get(self.session.host + "monitor/v2/switches", params={"status": "down"})

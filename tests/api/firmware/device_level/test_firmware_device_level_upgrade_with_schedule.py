@@ -14,7 +14,7 @@ class FirmwareDeviceUpgradeScheduleTests(FirmwareTestBase):
         super().setUpClass()
         cls.current_file_name = __file__
         cls.device_serial_from_config = cls.aruba_automation_config.get_property('TestCase', cls.current_file_name)
-        cls.device_serial = cls.device_serial_from_config.split("_")[1]
+        cls.device_serial = cls.device_serial_from_config.split("_")[-1]
         cls.log.printLog("device serial assigned for the test is :{}".format(cls.device_serial))
 
     def setUp(self):
@@ -60,9 +60,9 @@ class FirmwareDeviceUpgradeScheduleTests(FirmwareTestBase):
     def test_upgrade_a_with_device_local_time_and_schedule_with_recommended_version(self):
         if self.version == FirmwareConstants.SWITCH_RECOMMENDED_VERSION:
             self.log.printLog("device already in recommended version")
-            self.log.printLog("Downgrading device to some lower version..")
+            self.log.printLog("Downgrading device to version: {}".format(self.to_firmware_version))
             payload = FirmwareDeviceRequestBuilder().with_devices(
-                {self.device_serial: FirmwareConstants.SWITCH_VERSION_14}).build()
+                {self.device_serial: self.to_firmware_version}).build()
             self.firmware_obj.upgrade_all(data=payload)
             self.assertTrue(self.wait_for_device_reboot(self.device_serial),
                             "Device reboot taking long time than expected")
@@ -82,7 +82,8 @@ class FirmwareDeviceUpgradeScheduleTests(FirmwareTestBase):
         if self.wait_for_device_reboot(self.device_serial):
             self.log.printLog("Upgrade is complete")
             self.log.printLog("verifying Upgraded firmware version..")
-            self.assertEqual(self.to_firmware_version, self.get_device_firmware_vesion(self.device_serial))
+            self.assertEqual(FirmwareConstants.SWITCH_RECOMMENDED_VERSION,
+                             self.get_device_firmware_vesion(self.device_serial))
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 
@@ -111,7 +112,7 @@ class FirmwareDeviceUpgradeScheduleTests(FirmwareTestBase):
             self.log.printLog("device already in recommended version")
             self.log.printLog("Downgrading device to some lower version..")
             payload = FirmwareDeviceRequestBuilder().with_devices(
-                {self.device_serial: FirmwareConstants.SWITCH_VERSION_14}).build()
+                {self.device_serial: self.to_firmware_version}).build()
             self.firmware_obj.upgrade_all(data=payload)
             self.assertTrue(self.wait_for_device_reboot(self.device_serial),
                             "Device reboot taking long time than expected")
@@ -131,7 +132,8 @@ class FirmwareDeviceUpgradeScheduleTests(FirmwareTestBase):
         if self.wait_for_device_reboot(self.device_serial):
             self.log.printLog("Upgrade is complete")
             self.log.printLog("verifying Upgraded firmware version..")
-            self.assertEqual(self.to_firmware_version, self.get_device_firmware_vesion(self.device_serial))
+            self.assertEqual(FirmwareConstants.SWITCH_RECOMMENDED_VERSION,
+                             self.get_device_firmware_vesion(self.device_serial))
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 

@@ -108,7 +108,8 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
         if self.wait_for_device_reboot(self.device_serial):
             self.log.printLog("Upgrade is complete")
             self.log.printLog("verifying Upgraded firmware version..")
-            self.assertEqual(self.to_firmware_version, self.get_device_firmware_vesion(self.device_serial))
+            self.assertEqual(FirmwareConstants.SWITCH_RECOMMENDED_VERSION,
+                             self.get_device_firmware_vesion(self.device_serial))
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 
@@ -181,7 +182,8 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
         if self.wait_for_device_reboot(self.device_serial):
             self.log.printLog("Upgrade is complete")
             self.log.printLog("verifying Upgraded firmware version..")
-            self.assertEqual(self.to_firmware_version, self.get_device_firmware_vesion(self.device_serial))
+            self.assertEqual(FirmwareConstants.SWITCH_RECOMMENDED_VERSION,
+                             self.get_device_firmware_vesion(self.device_serial))
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 

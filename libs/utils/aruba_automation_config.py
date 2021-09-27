@@ -350,7 +350,7 @@ class ArubaAutomationConfig(metaclass=SingletonPerEnv):
             files_list = final_data_dict[key]
             for item in files_list:
                 self.config.set('TestCase', item, key)
-        # self.log.printStep("indexed testcases list: {}".format(indexed_testcase_list))
+        self.log.printStep("indexed testcases list: {}".format(indexed_testcase_list))
         self.log.printStep("final data dict:{}".format(final_data_dict))
 
         # Pushing the final data dict to env variable

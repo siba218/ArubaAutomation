@@ -2,6 +2,8 @@ from selenium.webdriver.common.by import By
 
 
 class OverviewPageLocators:
-    AVATAR_BUTTON = (By.CSS_SELECTOR, "#LoginUserName")
-    LOGOUT_LABEL = (By.CSS_SELECTOR, "#account_logout")
-    WELCOME_POPUP_CLOSE = (By.CSS_SELECTOR, "#welcome_cloud_close_div")
+    BUTTON_AVATAR = (By.CSS_SELECTOR, "#LoginUserName")
+    LABEL_LOGOUT = (By.CSS_SELECTOR, "#account_logout")
+    CLOSE_WELCOME_POPUP = (By.CSS_SELECTOR, "#welcome_cloud_close_div")
+    TAB_SUMMARY = (By.CSS_SELECTOR, "#global_all_devices")
+    BUTTON_SUMMARY_LIST = (By.CSS_SELECTOR, "#global_summary_list")

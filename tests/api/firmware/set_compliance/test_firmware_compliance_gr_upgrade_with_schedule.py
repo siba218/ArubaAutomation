@@ -13,7 +13,7 @@ class FirmwareComplianceGrUpgrareScheduleTests(FirmwareTestBase):
         super().setUpClass()
         cls.current_file_name = __file__
         cls.device_serial_from_config = cls.aruba_automation_config.get_property('TestCase', cls.current_file_name)
-        cls.device_serial = cls.device_serial_from_config.split("_")[1]
+        cls.device_serial = cls.device_serial_from_config.split("_")[-1]
         cls.log.printLog("device serial assigned for the test is :{}".format(cls.device_serial))
 
     def setUp(self):

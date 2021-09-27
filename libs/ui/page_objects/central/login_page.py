@@ -17,17 +17,20 @@ class LoginPage(BasePage):
         pass
 
     def user_login(self, username, password):
-        self.enter_text(LoginPageLocators.EMAIL_FIELD, username)
-        self.click_element(10, LoginPageLocators.CONTINUE_BUTTON)
-        self.wait_for_element_visibility(30, LoginPageLocators.PASSWORD_FIELD)
-        self.enter_text(LoginPageLocators.PASSWORD_FIELD, password)
-        self.click_element(10, LoginPageLocators.LOGIN_BUTTON)
+        self.enter_text(LoginPageLocators.EDITBOX_EMAIL, username)
+        self.click_element(10, LoginPageLocators.BUTTON_CONTINUE)
+        self.wait_for_element_visibility(30, LoginPageLocators.EDITBOX_PASSWORD)
+        self.enter_text(LoginPageLocators.EDITBOX_PASSWORD, password)
+        self.click_element(10, LoginPageLocators.BUTTON_LOGIN)
 
         # Check for welcome popup
-        self.wait_for_element_visibility(30, OverviewPageLocators.WELCOME_POPUP_CLOSE)
-        element = self.check_element_present(OverviewPageLocators.WELCOME_POPUP_CLOSE)
-        if element:
-            self.log.printLog("Welcome PopUp found.. closing the popup")
-            self.click_element(10, OverviewPageLocators.WELCOME_POPUP_CLOSE)
-            self.wait_for_element_visibility(10, OverviewPageLocators.AVATAR_BUTTON)
-            self.log.printLog("Login Complete")
+        try:
+            self.wait_for_element_visibility(30, OverviewPageLocators.CLOSE_WELCOME_POPUP)
+            element = self.check_element_present(OverviewPageLocators.CLOSE_WELCOME_POPUP)
+            if element:
+                self.log.printLog("Welcome PopUp found.. closing the popup")
+                self.click_element(10, OverviewPageLocators.CLOSE_WELCOME_POPUP)
+                self.wait_for_element_visibility(10, OverviewPageLocators.BUTTON_AVATAR)
+                self.log.printLog("Login Complete")
+        except:
+            self.log.printLog("Welcome popup not found after login with in 30 seconds.. Progressing with test.")

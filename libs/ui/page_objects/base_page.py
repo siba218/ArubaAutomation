@@ -357,6 +357,17 @@ class BasePage:
         input_el.send_keys(file_path)
         time.sleep(5)
 
+    # not working properly
+    # def wait_until_page_loads(self, max_wait=3000):
+    #     counter = 0
+    #     while counter < max_wait:
+    #         state = self.driver.execute_script("return document.readyState")
+    #         if state == "complete":
+    #             return True
+    #         time.sleep(5)
+    #         counter = counter + 5
+    #     return False
+
 
 class IncorrectPageException(Exception):
     """This exception is raised when we try to instantiate the wrong page."""

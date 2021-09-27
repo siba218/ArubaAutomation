@@ -1,4 +1,5 @@
 import sys
+import time
 
 from libs.api.FirmwareServices.firmware_request_builders import FirmwareUpgradeAllRequestBuilder
 from tests.api.firmware.base_firmware_test import FirmwareTestBase
@@ -95,11 +96,12 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
             self.log.printLog("device already in recommended version")
             self.log.printLog("Downgrading device to some lower version..")
             payload = FirmwareUpgradeAllRequestBuilder().with_sites(
-                {self.site_id: FirmwareConstants.SWITCH_VERSION_14}).build()
+                {self.site_id: self.to_firmware_version}).build()
             self.firmware_obj.upgrade_all(data=payload)
             self.assertTrue(self.wait_for_device_reboot(self.device_serial),
                             "Device reboot taking long time than expected")
 
+        self.log.printLog("Starting new upgrade with recommended version..")
         new_payload = FirmwareUpgradeAllRequestBuilder().with_sites({self.site_id: None}).build()
         self.firmware_obj.upgrade_all(data=new_payload)
         if self.wait_for_device_reboot(self.device_serial):

@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 
 
 class LoginPageLocators:
-    CONTINUE_BUTTON = (By.CSS_SELECTOR, "#SignIn")
-    EMAIL_FIELD = (By.CSS_SELECTOR, "#email")
-    PASSWORD_FIELD = (By.CSS_SELECTOR, "#password")
-    LOGIN_BUTTON = (By.CSS_SELECTOR, "#signIn_button")
+    BUTTON_CONTINUE = (By.CSS_SELECTOR, "#SignIn")
+    EDITBOX_EMAIL = (By.CSS_SELECTOR, "#email")
+    EDITBOX_PASSWORD = (By.CSS_SELECTOR, "#password")
+    BUTTON_LOGIN = (By.CSS_SELECTOR, "#signIn_button")
