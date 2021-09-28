@@ -26,7 +26,7 @@ class FinalRunClass:
             # command = "pytest -v -s {}".format(item)
             allure_path = os.getenv("ALLURE_PATH")
             # commad = "python3 -m pytest -v {} --alluredir=/Users/sibasishmohanta/Desktop/allure_report".format(item)
-            command = "pytest -v {}".format(item)
+            command = "pytest --alluredir {} -v {}".format(allure_path, item)
             print("#######################################")
             print("command is : {}".format(command))
             print("#######################################")
