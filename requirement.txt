@@ -10,6 +10,7 @@ docker
 factory_boy==3.0.1
 fabric
 flaky
+future
 gitpython
 google-api-python-client
 Naked
