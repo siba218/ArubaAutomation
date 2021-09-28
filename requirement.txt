@@ -12,6 +12,7 @@ fabric
 flaky
 future
 lxml
+email_split
 gitpython
 google-api-python-client
 Naked
