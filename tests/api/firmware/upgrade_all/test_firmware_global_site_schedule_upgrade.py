@@ -57,7 +57,7 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
             .with_when(epoch_time_2_min_ahead) \
             .with_timezone("none").build()
 
-        self.firmware_obj.upgrade_all(data=payload)
+        self.firmware.upgrade_all(data=payload)
 
         self.log.printLog("wait for 2 mins as firmware upgrade has been scheduled after two mins of current time..")
         time.sleep(120)
@@ -89,7 +89,7 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
             self.log.printLog("Downgrading device to some lower version..")
             payload = FirmwareUpgradeAllRequestBuilder().with_sites(
                 {self.site_id: FirmwareConstants.SWITCH_VERSION_14}).build()
-            self.firmware_obj.upgrade_all(data=payload)
+            self.firmware.upgrade_all(data=payload)
             self.assertTrue(self.wait_for_device_reboot(self.device_serial),
                             "Device reboot taking long time than expected")
 
@@ -99,7 +99,7 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
             .with_when(epoch_time_2_min_ahead) \
             .with_timezone("none").build()
 
-        self.firmware_obj.upgrade_all(data=payload)
+        self.firmware.upgrade_all(data=payload)
 
         self.log.printLog("wait for 2 mins as firmware upgrade has been scheduled after two mins of current time..")
         time.sleep(120)
@@ -132,7 +132,7 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
             .with_when(epoch_time_2_min_ahead) \
             .with_timezone("+05:30").build()
 
-        self.firmware_obj.upgrade_all(data=payload)
+        self.firmware.upgrade_all(data=payload)
 
         self.log.printLog("wait for 2 mins as firmware upgrade has been scheduled after two mins of current time..")
         time.sleep(120)
@@ -163,7 +163,7 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
             self.log.printLog("Downgrading device to some lower version..")
             payload = FirmwareUpgradeAllRequestBuilder().with_sites(
                 {self.site_id: FirmwareConstants.SWITCH_VERSION_14}).build()
-            self.firmware_obj.upgrade_all(data=payload)
+            self.firmware.upgrade_all(data=payload)
             self.assertTrue(self.wait_for_device_reboot(self.device_serial),
                             "Device reboot taking long time than expected")
 
@@ -173,7 +173,7 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
             .with_when(epoch_time_2_min_ahead) \
             .with_timezone("+05:30").build()
 
-        self.firmware_obj.upgrade_all(data=payload)
+        self.firmware.upgrade_all(data=payload)
 
         self.log.printLog("wait for 2 mins as firmware upgrade has been scheduled after two mins of current time..")
         time.sleep(120)

@@ -48,7 +48,7 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
             .with_partition(partition).\
             build()
 
-        self.firmware_obj.set_group_compliance(data=payload)
+        self.firmware.set_group_compliance(data=payload)
 
         self.log.printLog("payload is: {}".format(payload))
         if self.wait_for_device_reboot(self.device_serial):
@@ -68,13 +68,13 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
             .with_partition(partition)\
             .build()
 
-        self.firmware_obj.set_group_compliance(data=payload)
+        self.firmware.set_group_compliance(data=payload)
 
         self.log.printLog("payload is: {}".format(payload))
         if self.wait_for_device_firmware_download(self.device_serial):
             self.log.printLog("Device firmware download complete")
             self.log.printLog("rebooting the device....")
-            self.firmware_obj.device_reboot(data={"device_id": self.device_serial})
+            self.firmware.device_reboot(data={"device_id": self.device_serial})
             if self.wait_for_device_reboot(self.device_serial):
                 self.assertEqual(self.to_firmware_version, self.get_device_firmware_vesion(self.device_serial))
         else:
@@ -86,7 +86,7 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
             .with_groups([self.group_id]) \
             .with_delete_firmware_compliance({"CX":"none","HPPC":"none"})\
             .build()
-        self.firmware_obj.set_group_compliance(data=payload)
+        self.firmware.set_group_compliance(data=payload)
 
     @classmethod
     def tearDownClass(cls):

@@ -9,6 +9,9 @@ from selenium.webdriver import DesiredCapabilities
 from selenium.webdriver.support.abstract_event_listener import AbstractEventListener
 from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
 
+from libs.api.FirmwareServices.firmware_api import FirmwareApi
+from libs.api.GroupManagementServices.group_management_api import GroupManagementApi
+from libs.utils.RestFrontEnd import RestFrontEnd
 from libs.utils.aruba_automation_config import ArubaAutomationConfig
 from libs.utils.customer_logger import CustomLogger
 

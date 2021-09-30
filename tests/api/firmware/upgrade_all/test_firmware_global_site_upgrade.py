@@ -46,7 +46,7 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
             4. Once Upgrade is over then verify the Upgraded software version in the device
         """
         payload = FirmwareUpgradeAllRequestBuilder().with_sites({self.site_id: self.to_firmware_version}).build()
-        self.firmware_obj.upgrade_all(data=payload)
+        self.firmware.upgrade_all(data=payload)
 
         self.log.printLog("payload is: {}".format(payload))
         if self.wait_for_device_reboot(self.device_serial):
@@ -69,13 +69,13 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
         """
         payload = FirmwareUpgradeAllRequestBuilder().with_reboot(False).with_sites(
             {self.site_id: self.to_firmware_version}).build()
-        self.firmware_obj.upgrade_all(data=payload)
+        self.firmware.upgrade_all(data=payload)
 
         self.log.printLog("payload is: {}".format(payload))
         if self.wait_for_device_firmware_download(self.device_serial):
             self.log.printLog("Device firmware download complete")
             self.log.printLog("rebooting the device....")
-            self.firmware_obj.device_reboot(data={"device_id": self.device_serial})
+            self.firmware.device_reboot(data={"device_id": self.device_serial})
             if self.wait_for_device_reboot(self.device_serial):
                 self.assertEqual(self.to_firmware_version, self.get_device_firmware_vesion(self.device_serial))
         else:
@@ -97,13 +97,13 @@ class FirmwareSiteUpgradeTests(FirmwareTestBase):
             self.log.printLog("Downgrading device to some lower version..")
             payload = FirmwareUpgradeAllRequestBuilder().with_sites(
                 {self.site_id: self.to_firmware_version}).build()
-            self.firmware_obj.upgrade_all(data=payload)
+            self.firmware.upgrade_all(data=payload)
             self.assertTrue(self.wait_for_device_reboot(self.device_serial),
                             "Device reboot taking long time than expected")
 
         self.log.printLog("Starting new upgrade with recommended version..")
         new_payload = FirmwareUpgradeAllRequestBuilder().with_sites({self.site_id: None}).build()
-        self.firmware_obj.upgrade_all(data=new_payload)
+        self.firmware.upgrade_all(data=new_payload)
         if self.wait_for_device_reboot(self.device_serial):
             self.log.printLog("Upgrade is complete")
             self.log.printLog("verifying Upgraded firmware version..")

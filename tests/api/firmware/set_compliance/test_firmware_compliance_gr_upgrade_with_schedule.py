@@ -46,7 +46,7 @@ class FirmwareComplianceGrUpgrareScheduleTests(FirmwareTestBase):
             .build()
 
         # self.firmware_obj.set_group_compliance_check(data=payload)
-        self.firmware_obj.set_group_compliance(data=payload)
+        self.firmware.set_group_compliance(data=payload)
 
         self.log.printLog("wait for 2 mins as firmware upgrade has been scheduled after two mins of current time..")
         time.sleep(120)
@@ -65,7 +65,7 @@ class FirmwareComplianceGrUpgrareScheduleTests(FirmwareTestBase):
             .with_groups([self.group_id]) \
             .with_delete_firmware_compliance({"CX": "none", "HPPC": "none"}) \
             .build()
-        self.firmware_obj.set_group_compliance(data=payload)
+        self.firmware.set_group_compliance(data=payload)
 
     @classmethod
     def tearDownClass(cls):
