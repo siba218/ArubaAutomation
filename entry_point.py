@@ -24,9 +24,9 @@ class FinalRunClass:
         for item in test_files_list:
             time.sleep(5)
             # command = "pytest -v -s {}".format(item)
-            allure_path = os.getenv("ALLURE_PATH")
-            # commad = "python3 -m pytest -v {} --alluredir=/Users/sibasishmohanta/Desktop/allure_report".format(item)
-            command = "pytest --alluredir {} -v {}".format(allure_path, item)
+            # allure_path = os.getenv("ALLURE_PATH")
+            command = "python3 -m pytest -v {} --alluredir=/Users/sibasishmohanta/Desktop/allure_report".format(item)
+            # command = "pytest --alluredir {} -v {}".format(allure_path, item)
             print("#######################################")
             print("command is : {}".format(command))
             print("#######################################")
