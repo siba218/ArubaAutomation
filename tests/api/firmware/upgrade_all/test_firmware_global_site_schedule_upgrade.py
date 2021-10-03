@@ -99,7 +99,7 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
             self.log.printLog("Downgrading device to some lower version..")
             payload = FirmwareUpgradeAllRequestBuilder().with_sites(
                 {self.site_id: FirmwareConstants.SWITCH_VERSION_14}).build()
-            self.firmware.upgrade_all(data=payload)
+            self.firmware.upgrade_all(self.session, data=payload)
             self.assertTrue(self.wait_for_device_reboot(self.session, self.device_serial),
                             "Device reboot taking long time than expected")
 
@@ -174,7 +174,7 @@ class FirmwareSiteUpgradeSchedulingTests(FirmwareTestBase):
             self.log.printLog("Downgrading device to some lower version..")
             payload = FirmwareUpgradeAllRequestBuilder().with_sites(
                 {self.site_id: FirmwareConstants.SWITCH_VERSION_14}).build()
-            self.firmware.upgrade_all(data=payload)
+            self.firmware.upgrade_all(self.session, data=payload)
             self.assertTrue(self.wait_for_device_reboot(self.session, self.device_serial),
                             "Device reboot taking long time than expected")
 

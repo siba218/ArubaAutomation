@@ -83,6 +83,8 @@ class FirmwareDeviceUpgradeTests(FirmwareTestBase):
             payload = FirmwareDeviceRequestBuilder().with_devices(
                 {self.device_serial: FirmwareConstants.SWITCH_VERSION_14}).build()
             self.firmware.upgrade_all(self.session, data=payload)
+            self.assertTrue(self.wait_for_device_reboot(self.session, self.device_serial),
+                            "Device reboot taking long time than expected")
 
         new_payload = FirmwareDeviceRequestBuilder().with_devices({self.device_serial: None}).build()
         self.firmware.upgrade_all(self.session, data=new_payload)
