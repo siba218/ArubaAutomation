@@ -4,6 +4,7 @@ from nose_parameterized import parameterized
 
 from libs.api.FirmwareServices.firmware_request_builders import FirmwareComplianceRequestBuilder
 from libs.utils.RestFrontEnd import RestFrontEnd
+from libs.utils.ping_utils import PingUtils
 from tests.api.firmware.base_firmware_test import FirmwareTestBase
 from tests.api.firmware.firmware_constants import FirmwareConstants
 
@@ -12,17 +13,18 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+        cls.current_file_name = __file__
+        cls.device_serial_from_config = cls.aruba_automation_config.get_property('TestCase', cls.current_file_name)
+        cls.device_serial = cls.device_serial_from_config.split("_")[-1]
+
+        cls.log.printLog("device serial assigned for the test is :{}".format(cls.device_serial))
         cls.email = cls.aruba_automation_config.get_property("user", "email")
         cls.password = cls.aruba_automation_config.get_property("user", "password")
         cls.login_url = cls.aruba_automation_config.get_property("central", "login_url")
         cls.customer_id = cls.aruba_automation_config.get_property("user", "customer_id")
+        cls.ip_address = cls.aruba_automation_config.get_property(cls.device_serial_from_config, "ip")
         cls.session = RestFrontEnd(host=cls.login_url, user=cls.email, password=cls.password,
                                    customer_id=cls.customer_id)
-
-        cls.current_file_name = __file__
-        cls.device_serial_from_config = cls.aruba_automation_config.get_property('TestCase', cls.current_file_name)
-        cls.device_serial = cls.device_serial_from_config.split("_")[-1]
-        cls.log.printLog("device serial assigned for the test is :{}".format(cls.device_serial))
 
     def setUp(self):
         self.log.printLog("Verifying device is online in setup....")
@@ -47,13 +49,16 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
 
         self.log.printLog("Upgraded firmware version for the test: {}".format(self.to_firmware_version))
 
+    def test_sample(self):
+        self.log.printLog("ip address is: {}".format(self.ip_address))
+
     @parameterized.expand(
-        [("primary",), ("secondary",), ])
+        [("Primary",), ("Secondary",), ])
     def test_upgrade_a_group_with_set_compliance(self, partition):
         payload = FirmwareComplianceRequestBuilder() \
             .with_set_firmware_compliance({"HPPC": self.to_firmware_version}) \
             .with_groups([self.group_id]) \
-            .with_partition(partition). \
+            .with_partition(str(partition).lower()). \
             build()
 
         self.firmware.set_group_compliance(self.session, data=payload)
@@ -61,9 +66,18 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
         self.log.printLog("payload is: {}".format(payload))
         if self.wait_for_device_reboot(self.session, self.device_serial):
             self.log.printLog("Upgrade is complete")
-            self.log.printLog("verifying Upgraded firmware version..")
+            self.log.printLog("verifying Upgraded firmware version using api..")
             self.assertEqual(self.to_firmware_version,
                              self.get_device_firmware_vesion(self.session, self.device_serial))
+
+            self.log.printLog("verifying Upgraded firmware version and reboot partition by sshing device")
+            device_data = PingUtils().get_device_details_using_ssh(self.ip_address, "admin", "admin1234")
+            self.log.printLog("Data fetched from device using SSH: {}".format(device_data))
+            self.assertEqual(device_data["current_version"], self.to_firmware_version,
+                             "Version mismatch while fetched using ssh")
+            self.assertEqual(device_data["default_boot_image"], partition,
+                             "Partition reboot mismatch while fetched using ssh")
+
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 
@@ -87,6 +101,14 @@ class FirmwareComplianceGrUpgrareTests(FirmwareTestBase):
             if self.wait_for_device_reboot(self.session, self.device_serial):
                 self.assertEqual(self.to_firmware_version,
                                  self.get_device_firmware_vesion(self.session, self.device_serial))
+
+                self.log.printLog("verifying Upgraded firmware version and reboot partition by sshing device")
+                device_data = PingUtils().get_device_details_using_ssh(self.ip_address, "admin", "admin1234")
+                self.log.printLog("Data fetched from device using SSH: {}".format(device_data))
+                self.assertEqual(device_data["current_version"], self.to_firmware_version,
+                                 "Version mismatch while fetched using ssh")
+                self.assertEqual(device_data["default_boot_image"], partition,
+                                 "Partition reboot mismatch while fetched using ssh")
         else:
             self.fail("Firmware Upgrade Failed: device get stuck during firmware upgrade")
 
